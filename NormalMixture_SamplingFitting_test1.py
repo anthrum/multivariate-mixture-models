@@ -43,4 +43,4 @@ y.plot.scatter([0,],[1,], title = 'Sample from fitted gaussian mixture', xlabel 
 plt.show()
 
 # From the sample descriptions and graphical analysis, the two samples seem to be generated from quite similar distributions suggesting the fitted model might
-# be an appropriate.  
+# be an appropriate approximation.  
