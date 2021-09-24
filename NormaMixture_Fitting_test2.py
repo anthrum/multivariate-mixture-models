@@ -28,5 +28,5 @@ sp500_log_returns = np.log(sp500.iloc[:, 1]) - np.log(sp500.iloc[:, 3])
 gold_log_returns = np.log(gold.iloc[:, 1]) - np.log(gold.iloc[:, 3])
 returns = pd.DataFrame({'sp500 returns':sp500_log_returns,'gold returns': gold_log_returns})
 print(returns)
-#print(y)
+
 z = mixture.GaussianMixture(100).fit(returns)
