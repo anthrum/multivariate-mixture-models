@@ -56,7 +56,7 @@ print('generated sample \n \n', stats.mstats.describe(generated),'\n')
 
 # Plotting
 returns.hist(bins=30)
-pd.DataFrame(generated).hist(bins=30)
+generated.hist(bins=30)
 
 returns.plot.scatter(['sp500 returns'],['gold returns'], title = 'Original Sample', xlabel = 'M1', ylabel = 'M2')
 generated.plot.scatter([0,],[1,], title = 'Sample from fitted gaussian mixture', xlabel = 'M1', ylabel = 'M2')
