@@ -1,3 +1,10 @@
+import pandas as pd
+import numpy as np
+import random
+from scipy import stats
+from sklearn import mixture
+import matplotlib.pyplot as plt
+
 sp500 = pd.read_csv('HistoricalData_1632437651658.csv')
 gold = pd.read_csv('HistoricalData_1632440949562.csv').drop([0])
 
