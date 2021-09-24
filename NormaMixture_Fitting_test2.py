@@ -37,14 +37,27 @@ gold_log_returns = (np.log(gold.iloc[:, 1]) - np.log(gold.iloc[:, 3]))*100
 returns = pd.DataFrame({'sp500 returns':sp500_log_returns,'gold returns': gold_log_returns})
 print(returns)
 
-z = mixture.GaussianMixture(100).fit(returns)
-generated = z.sample(len(gold.index))[0]
+# Mixture Model Selection (lowest aic criterion)
+max_components = 200
+aic_scores = []
+for i in range(max_components):    #measures aic from 1 component to max_components
+    aic_scores.append(mixture.GaussianMixture(i + 1).fit(returns).aic(returns))
+num_of_components = aic_scores.index(min(aic_scores)) + 1
+print('number of components for gaussian mixture model: ', num_of_components)
 
+# Fitting model with the selected number of components given by the previous algorithm
+z = mixture.GaussianMixture(num_of_components).fit(returns)
+# Generating simulated sample
+generated = pd.DataFrame(z.sample(len(gold.index))[0])
+
+# Descriptive statistics of the margins
 print( 'observed sample: \n \n', stats.mstats.describe(returns), '\n')
 print('generated sample \n \n', stats.mstats.describe(generated),'\n')
 
+# Plotting
 returns.hist(bins=30)
 pd.DataFrame(generated).hist(bins=30)
-#returns.plot.scatter([0,],[1,], title = 'Original Sample', xlabel = 'M1', ylabel = 'M2')
-#generated.plot.scatter([0,],[1,], title = 'Sample from fitted gaussian mixture', xlabel = 'M1', ylabel = 'M2')
+
+returns.plot.scatter(['sp500 returns'],['gold returns'], title = 'Original Sample', xlabel = 'M1', ylabel = 'M2')
+generated.plot.scatter([0,],[1,], title = 'Sample from fitted gaussian mixture', xlabel = 'M1', ylabel = 'M2')
 plt.show()
