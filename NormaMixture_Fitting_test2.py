@@ -8,9 +8,8 @@ import matplotlib.pyplot as plt
 sp500 = pd.read_csv('HistoricalData_1632437651658.csv')
 gold = pd.read_csv('HistoricalData_1632440949562.csv').drop([0])
 
-print(sp500)
-print(gold)
-
+#print(sp500)
+#print(gold)
 
 gold1 = gold['Date']
 
@@ -34,6 +33,7 @@ print(sp500)
 sp500_log_returns = (np.log(sp500.iloc[:, 1]) - np.log(sp500.iloc[:, 3]))*100
 gold_log_returns = (np.log(gold.iloc[:, 1]) - np.log(gold.iloc[:, 3]))*100
 
+# Bivariate returns dataframe
 returns = pd.DataFrame({'sp500 returns':sp500_log_returns,'gold returns': gold_log_returns})
 print(returns)
 
