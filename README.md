@@ -1,2 +1,2 @@
 # multivariate-mixture-models
-Simulate, test for, and describe multivariate mixture distributions
+Simulate, fit, test, and describe multivariate mixture distributions for learning purposes
