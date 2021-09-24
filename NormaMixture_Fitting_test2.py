@@ -31,9 +31,20 @@ print(sp500)
 # number index matches
 
 # Calculating returns (we're calculating daily log returns considering the difference between closing and opening prices
-sp500_log_returns = np.log(sp500.iloc[:, 1]) - np.log(sp500.iloc[:, 3])
-gold_log_returns = np.log(gold.iloc[:, 1]) - np.log(gold.iloc[:, 3])
+sp500_log_returns = (np.log(sp500.iloc[:, 1]) - np.log(sp500.iloc[:, 3]))*100
+gold_log_returns = (np.log(gold.iloc[:, 1]) - np.log(gold.iloc[:, 3]))*100
+
 returns = pd.DataFrame({'sp500 returns':sp500_log_returns,'gold returns': gold_log_returns})
 print(returns)
 
 z = mixture.GaussianMixture(100).fit(returns)
+generated = z.sample(len(gold.index))[0]
+
+print( 'observed sample: \n \n', stats.mstats.describe(returns), '\n')
+print('generated sample \n \n', stats.mstats.describe(generated),'\n')
+
+returns.hist(bins=30)
+pd.DataFrame(generated).hist(bins=30)
+#returns.plot.scatter([0,],[1,], title = 'Original Sample', xlabel = 'M1', ylabel = 'M2')
+#generated.plot.scatter([0,],[1,], title = 'Sample from fitted gaussian mixture', xlabel = 'M1', ylabel = 'M2')
+plt.show()
