@@ -38,17 +38,33 @@ returns = pd.DataFrame({'sp500 returns':sp500_log_returns,'gold returns': gold_l
 print(returns)
 
 # Mixture Model Selection (lowest aic criterion)
-max_components = 200
-aic_scores = []
-for i in range(max_components):    #measures aic from 1 component to max_components
-    aic_scores.append(mixture.GaussianMixture(i + 1).fit(returns).aic(returns))
-num_of_components = aic_scores.index(min(aic_scores)) + 1
-print('number of components for gaussian mixture model: ', num_of_components)
+MAX_COMPONENTS = 200
+CRITERION = 'bic'
 
-# Fitting model with the selected number of components given by the previous algorithm
-z = mixture.GaussianMixture(num_of_components).fit(returns)
-# Generating simulated sample
-generated = pd.DataFrame(z.sample(len(gold.index))[0])
+def norm_mixture_mod_select(max_components, info_criterion):
+    scores = []
+    if info_criterion == 'aic':
+        for i in range(max_components):    #measures aic from 1 component to max_components
+            scores.append(mixture.GaussianMixture(i + 1).fit(returns).aic(returns))
+    elif info_criterion == 'bic':
+        for i in range(max_components):    #measures bic from 1 component to max_components
+            scores.append(mixture.GaussianMixture(i + 1).fit(returns).bic(returns))
+    else:
+        print("ERROR: unrecognized information criterion. Please insert 'aic' or 'bic' as information criterion")
+    num_of_components = scores.index(min(scores)) + 1
+    # Fitting model with the selected number of components
+    model = mixture.GaussianMixture(num_of_components).fit(returns)
+    return model, num_of_components
+
+# Generating simulated sample using the best fitted model
+print(
+    f'Generating sample from normal mixture distribuiton with '
+    f'{norm_mixture_mod_select(MAX_COMPONENTS, CRITERION)[1]} components')
+
+generated = pd.DataFrame(
+    norm_mixture_mod_select(MAX_COMPONENTS, CRITERION)[0]
+        .sample(len(gold.index))[0]
+    )
 
 # Descriptive statistics of the margins
 print( 'observed sample: \n \n', stats.mstats.describe(returns), '\n')
