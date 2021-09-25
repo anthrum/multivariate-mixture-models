@@ -38,32 +38,33 @@ returns = pd.DataFrame({'sp500 returns':sp500_log_returns,'gold returns': gold_l
 print(returns)
 
 # Mixture Model Selection (lowest aic criterion)
-MAX_COMPONENTS = 200
+components = 200
 CRITERION = 'bic'
 
-def norm_mixture_mod_select(max_components, info_criterion):
-    scores = []
-    if info_criterion == 'aic':
-        for i in range(max_components):    #measures aic from 1 component to max_components
-            scores.append(mixture.GaussianMixture(i + 1).fit(returns).aic(returns))
-    elif info_criterion == 'bic':
-        for i in range(max_components):    #measures bic from 1 component to max_components
-            scores.append(mixture.GaussianMixture(i + 1).fit(returns).bic(returns))
-    else:
-        print("ERROR: unrecognized information criterion. Please insert 'aic' or 'bic' as information criterion")
-    num_of_components = scores.index(min(scores)) + 1
-    # Fitting model with the selected number of components
-    model = mixture.GaussianMixture(num_of_components).fit(returns)
-    return model, num_of_components
+#def norm_mixture_mod_select(max_components, info_criterion):
+ #   scores = []
+  #  if info_criterion == 'aic':
+   #     for i in range(max_components):    #measures aic from 1 component to max_components
+    #        scores.append(mixture.GaussianMixture(i + 1).fit(returns).aic(returns))
+     #       print(f'{100*i/max_components}%')
+    #elif info_criterion == 'bic':
+     #   for i in range(max_components):    #measures bic from 1 component to max_components
+      #      scores.append(mixture.GaussianMixture(i + 1).fit(returns).bic(returns))
+       #     print(f'{100*i / max_components}%')
+    #else:
+     #   print("ERROR: unrecognized information criterion. Please insert 'aic' or 'bic' as information criterion")
+    #num_of_components = scores.index(min(scores)) + 1
+    #model = mixture.GaussianMixture(num_of_components).fit(returns)
+    #return model, num_of_components
 
 # Generating simulated sample using the best fitted model
+model = mixture.GaussianMixture(components).fit(returns)
 print(
     f'Generating sample from normal mixture distribuiton with '
-    f'{norm_mixture_mod_select(MAX_COMPONENTS, CRITERION)[1]} components')
+    f'{components} components')
 
 generated = pd.DataFrame(
-    norm_mixture_mod_select(MAX_COMPONENTS, CRITERION)[0]
-        .sample(len(gold.index))[0]
+    model.sample(len(gold.index))[0]
     )
 
 # Descriptive statistics of the margins
@@ -74,6 +75,7 @@ print('generated sample \n \n', stats.mstats.describe(generated),'\n')
 returns.hist(bins=30)
 generated.hist(bins=30)
 
-returns.plot.scatter(['sp500 returns'],['gold returns'], title = 'Original Sample', xlabel = 'M1', ylabel = 'M2')
+returns.plot.scatter(['sp500 returns'],['gold returns'], title = 'Original Sample', xlabel = 'sp500', ylabel = 'gold')
 generated.plot.scatter([0,],[1,], title = 'Sample from fitted gaussian mixture', xlabel = 'M1', ylabel = 'M2')
 plt.show()
+print(model.get_params())
