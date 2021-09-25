@@ -5,8 +5,8 @@ from scipy import stats
 from sklearn import mixture
 import matplotlib.pyplot as plt
 
-sp500 = pd.read_csv('HistoricalData_1632437651658.csv')
-gold = pd.read_csv('HistoricalData_1632440949562.csv').drop([0])
+sp500 = pd.read_csv('/PycharmProjects/multivariate-mixture-models/HistoricalData_SP500.csv')
+gold = pd.read_csv('PycharmProjects/multivariate-mixture-models/HistoricalData_Gold.csv').drop([0])
 
 #print(sp500)
 #print(gold)
