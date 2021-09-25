@@ -1,5 +1,9 @@
 import numpy as np
 import pandas as pd
+import random
+from scipy import stats
+from sklearn import mixture
+import matplotlib.pyplot as plt
 
 sp500 = pd.read_csv('HistoricalData_SP500.csv')
 gold = pd.read_csv('HistoricalData_Gold.csv').drop([0])
