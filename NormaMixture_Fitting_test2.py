@@ -39,7 +39,7 @@ print(returns)
 
 # Mixture Model Selection (lowest aic criterion)
 components = 200
-CRITERION = 'bic'
+#CRITERION = 'bic'
 
 #def norm_mixture_mod_select(max_components, info_criterion):
  #   scores = []
@@ -64,8 +64,9 @@ print(
     f'{components} components')
 
 generated = pd.DataFrame(
-    model.sample(len(gold.index))[0]
-    )
+    #model.sample(len(gold.index))[0]
+    model.sample(len(gold.index))[0])
+
 
 # Descriptive statistics of the margins
 print( 'observed sample: \n \n', stats.mstats.describe(returns), '\n')
