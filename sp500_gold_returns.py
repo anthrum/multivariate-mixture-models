@@ -5,9 +5,9 @@ from scipy import stats
 from sklearn import mixture
 import matplotlib.pyplot as plt
 import math
-
+from statsmodels.distributions.empirical_distribution import ECDF
 import useful_functions
-from useful_functions import tail_scatter
+
 
 sp500 = pd.read_csv('HistoricalData_SP500.csv')
 gold = pd.read_csv('HistoricalData_Gold.csv').drop([0])
@@ -49,6 +49,9 @@ print(returns)
 #g_returns = returns['gold returns']
 #s_returns = returns['sp500 returns']
 
+useful_functions.bivariate_ecdf(returns, 'sp500 returns', 'gold returns')
+
+#Plotting synthesis plot
 useful_functions.bivariate_synthesis_plot(returns)
 
 x = stats.t.fit(gold_log_returns)
@@ -76,15 +79,18 @@ plt.show()
 
 
 #Tail scatter plots
-tail_scatter(quantile=0.05,  df= returns,
+useful_functions.tail_scatter(quantile=0.05,  df= returns,
              column_label2='gold returns', column_label1='sp500 returns', lower=True) # sp500 lower tail
 
-tail_scatter(quantile=0.05,  df= returns,
+useful_functions.tail_scatter(quantile=0.05,  df= returns,
              column_label1='gold returns', column_label2='sp500 returns', lower=True) # gold lower tail
-tail_scatter(quantile=0.05,  df= returns,
+useful_functions.tail_scatter(quantile=0.05,  df= returns,
              column_label2='gold returns', column_label1='sp500 returns', lower=False) # sp500 upper tail
 
-tail_scatter(quantile=0.05,  df= returns,
+useful_functions.tail_scatter(quantile=0.05,  df= returns,
              column_label1='gold returns', column_label2='sp500 returns', lower=False) # gold upper tail
+
+
+
 
 
