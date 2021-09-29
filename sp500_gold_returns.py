@@ -6,6 +6,9 @@ from sklearn import mixture
 import matplotlib.pyplot as plt
 import math
 
+import useful_functions
+from useful_functions import tail_scatter
+
 sp500 = pd.read_csv('HistoricalData_SP500.csv')
 gold = pd.read_csv('HistoricalData_Gold.csv').drop([0])
 
@@ -46,30 +49,7 @@ print(returns)
 #g_returns = returns['gold returns']
 #s_returns = returns['sp500 returns']
 
-fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
-ax1.hist(sp500_log_returns, bins = 100, density= True)
-xmin, xmax = plt.xlim()
-ax3.scatter(sp500_log_returns, gold_log_returns)
-ax4.hist(gold_log_returns, bins = 100, orientation='horizontal', density= True)
-
-
-# Plot the PDF.
-sorted_gold = np.sort(gold_log_returns)
-sorted_sp500 = np.sort(sp500_log_returns)
-
-ax1.plot(sorted_gold,
-         1 / (gold_log_returns.std() *np.sqrt(2 * np.pi)) *
-         np.exp(- (sorted_gold - gold_log_returns.mean())**2 / (2 * gold_log_returns.std()**2)))
-
-ax4.plot(1 / (sp500_log_returns.std() *np.sqrt(2 * np.pi)) *
-         np.exp(- (sorted_sp500 - sp500_log_returns.mean())**2 / (2 * sp500_log_returns.std()**2)),
-         sorted_sp500)
-
-
-ax2.scatter(sorted_gold ,sorted_sp500 )
-ax2.plot(sorted_gold,sorted_gold)
-plt.show()
-
+useful_functions.bivariate_synthesis_plot(returns)
 
 x = stats.t.fit(gold_log_returns)
 sample = stats.t(x[0],x[1],x[2]).rvs(125)
@@ -92,30 +72,19 @@ plt.hist(kurtosis_diff, density=True, bins=10)
 plt.show()
 # BIAS ESTIMATION OF KURTOSIS
 
-def tail_scatter(quantile, sample_array, df, column_label1, column_label2, lower):
-    if lower == True:
-        sorted_array = np.sort(sample_array)
-        tail = sorted_array[:math.floor(quantile*len(sorted_array))]
-    elif lower == False:
-        sorted_array = np.sort(sample_array)[::-1]
-        tail = sorted_array[:math.floor(quantile*len(sorted_array))]
-    else:
-        print('ERROR')
 
-    observations_in_tail = []
-    for element in tail:
-        observations_in_tail.append(np.where(sample_array == element)[0][0])
-    observations_in_tail = df.iloc[observations_in_tail]
-    observations_in_tail.plot.scatter( column_label1,column_label2)
-    plt.show()
 
-tail_scatter(quantile=0.05, sample_array=sp500_log_returns, df= returns,
-             column_label2='gold returns', column_label1='sp500 returns', lower=True)
-tail_scatter(quantile=0.05, sample_array=gold_log_returns, df= returns,
 
-             column_label1='gold returns', column_label2='sp500 returns', lower=True)
-tail_scatter(quantile=0.05, sample_array=sp500_log_returns, df= returns,
-             column_label2='gold returns', column_label1='sp500 returns', lower=False)
+#Tail scatter plots
+tail_scatter(quantile=0.05,  df= returns,
+             column_label2='gold returns', column_label1='sp500 returns', lower=True) # sp500 lower tail
 
-tail_scatter(quantile=0.05, sample_array=gold_log_returns, df= returns,
-             column_label1='gold returns', column_label2='sp500 returns', lower=False)
+tail_scatter(quantile=0.05,  df= returns,
+             column_label1='gold returns', column_label2='sp500 returns', lower=True) # gold lower tail
+tail_scatter(quantile=0.05,  df= returns,
+             column_label2='gold returns', column_label1='sp500 returns', lower=False) # sp500 upper tail
+
+tail_scatter(quantile=0.05,  df= returns,
+             column_label1='gold returns', column_label2='sp500 returns', lower=False) # gold upper tail
+
+
