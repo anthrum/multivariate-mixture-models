@@ -61,6 +61,7 @@ def normal_variance_mixture(miu, sigma, n, a, b):
 def bivariate_ecdf(df, column_label1, column_label2):
     sorted_array1 = df.sort_values(by=column_label1, ascending=True).copy()
     sorted_array1.reset_index(inplace=True)
+    print(sorted_array1)
     sorted_array2 = sorted_array1.sort_values(by=column_label2, ascending=True).copy()
     sorted_array2.reset_index(inplace=True)
     pd.set_option('display.max_columns', None)
@@ -71,9 +72,14 @@ def bivariate_ecdf(df, column_label1, column_label2):
     x = []
     i = 0
     for row in df2_dict:
-        x.append( [i, df2[df2['level_0'] <= row['level_0']].count()['level_0'] - 1 ])
+        x.append( [min(i, df2[df2['level_0'] <= row['level_0']].count()['level_0'] - 1) , df2.iloc[i,0]])
         i += 1
-    print(x)
+    for element in x:
+        element[0] = (element[0]+1)/len(x)*100
+        element[1] = df.iloc[element[1],:].to_list()
+
+    return x
+
 
 
 
