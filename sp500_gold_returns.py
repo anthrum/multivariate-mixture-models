@@ -28,15 +28,8 @@ for i in range(len(comparison)):
     else:
         pass
 
-gold.reset_index(drop=True, inplace=True)
-print(gold)
-print(sp500)
-# number index matches
 
-gold.reset_index(drop=True, inplace=True)
-print(gold)
-print(sp500)
-# number index matches
+
 
 # Calculating returns (we're calculating daily log returns considering the difference between closing and opening prices
 sp500_log_returns = (np.log(sp500.iloc[:, 1]) - np.log(sp500.iloc[:, 3]))*100
@@ -44,15 +37,41 @@ gold_log_returns = (np.log(gold.iloc[:, 1]) - np.log(gold.iloc[:, 3]))*100
 
 # Bivariate returns dataframe
 returns = pd.DataFrame({'sp500 returns':sp500_log_returns,'gold returns': gold_log_returns})
+
 print(returns)
 
-#g_returns = returns['gold returns']
-#s_returns = returns['sp500 returns']
 
-useful_functions.bivariate_ecdf(returns, 'sp500 returns', 'gold returns')
+
+ecdf_dict = useful_functions.bivariate_ecdf(returns, 'sp500 returns', 'gold returns')
+ecdf_list = []
+for point in returns.dropna().to_dict('records'):
+    ecdf_list.append(ecdf_dict[(point['sp500 returns'], point['gold returns'])])
+ecdf_array = np.array(ecdf_list)
+
+
+
+fig = plt.figure()
+ax = fig.add_subplot(projection='3d')
+
+hist, xedges, yedges  = np.histogram2d(sp500_log_returns, gold_log_returns, bins=20, density=True,
+                      range=[[min(gold_log_returns),max(gold_log_returns)],
+                             [min(sp500_log_returns),max(sp500_log_returns)]]
+                      )
+
+# Construct arrays for the anchor positions of the 400 bars.
+xpos, ypos = np.meshgrid(xedges[:-1] + 0.25, yedges[:-1] + 0.25, indexing="ij")
+xpos = xpos.ravel()
+ypos = ypos.ravel()
+zpos = 0
+
+# Construct arrays with the dimensions for the 400 bars.
+dx = dy = 0.5
+dz = hist.ravel()
+ax.bar3d(xpos, ypos, zpos, dx, dy, dz, zsort='average')
+plt.show()
 
 #Plotting synthesis plot
-useful_functions.bivariate_synthesis_plot(returns)
+useful_functions.bivariate_synthesis_plot(returns.dropna())
 
 x = stats.t.fit(gold_log_returns)
 sample = stats.t(x[0],x[1],x[2]).rvs(125)

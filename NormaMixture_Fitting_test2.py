@@ -41,21 +41,7 @@ print(returns)
 components = 200
 #CRITERION = 'bic'
 
-#def norm_mixture_mod_select(max_components, info_criterion):
- #   scores = []
-  #  if info_criterion == 'aic':
-   #     for i in range(max_components):    #measures aic from 1 component to max_components
-    #        scores.append(mixture.GaussianMixture(i + 1).fit(returns).aic(returns))
-     #       print(f'{100*i/max_components}%')
-    #elif info_criterion == 'bic':
-     #   for i in range(max_components):    #measures bic from 1 component to max_components
-      #      scores.append(mixture.GaussianMixture(i + 1).fit(returns).bic(returns))
-       #     print(f'{100*i / max_components}%')
-    #else:
-     #   print("ERROR: unrecognized information criterion. Please insert 'aic' or 'bic' as information criterion")
-    #num_of_components = scores.index(min(scores)) + 1
-    #model = mixture.GaussianMixture(num_of_components).fit(returns)
-    #return model, num_of_components
+
 
 # Generating simulated sample using the best fitted model
 model = mixture.GaussianMixture(components).fit(returns)
