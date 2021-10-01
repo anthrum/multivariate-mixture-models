@@ -59,26 +59,34 @@ def normal_variance_mixture(miu, sigma, n, a, b):
     return X
 
 def bivariate_ecdf(df, column_label1, column_label2):
-    sorted_array1 = df.sort_values(by=column_label1, ascending=True).copy()
+    sorted_array1 = df.sort_values(by=column_label1, ascending=True)
     sorted_array1.reset_index(inplace=True)
     print(sorted_array1)
-    sorted_array2 = sorted_array1.sort_values(by=column_label2, ascending=True).copy()
+    sorted_array2 = sorted_array1.sort_values(by=column_label2, ascending=True)
     sorted_array2.reset_index(inplace=True)
     pd.set_option('display.max_columns', None)
     df2 = pd.concat([sorted_array1,sorted_array2], axis=1)
     df2.set_index(df2.iloc[:,0])
     df2_dict = df2.to_dict('records')
     print(df2)
-    x = []
+    n_points = []
+    ecdf = {}
+
+
+
+    #Loop will generate with a list of lists containing an indexer value for a point and the number of
+    # points that have both lower x and y coordinate
     i = 0
     for row in df2_dict:
-        x.append( [min(i, df2[df2['level_0'] <= row['level_0']].count()['level_0'] - 1) , df2.iloc[i,0]])
+        n_points.append( [min(i, df2[df2['level_0'] <= row['level_0']].count()['level_0'] - 1) , df2.iloc[i,0]])
         i += 1
-    for element in x:
-        element[0] = (element[0]+1)/len(x)*100
-        element[1] = df.iloc[element[1],:].to_list()
-
-    return x
+    #generates dictionary with point coordinates as key and ecdf value on that point
+    for element in n_points:
+        ecdf[tuple(df.iloc[element[1],:].to_list())] = (element[0]+1)/len(n_points)*100
+        #element[0] =
+        #element[1] =
+    print(ecdf)
+    return ecdf
 
 
 
