@@ -69,10 +69,12 @@ dx = dy = 0.5
 dz = hist.ravel()
 ax.bar3d(xpos, ypos, zpos, dx, dy, dz, zsort='average')
 plt.show()
+#-------------------- -------------------------  -------------------------   -------------------  -------------- ------#
 
 #Plotting synthesis plot
 useful_functions.bivariate_synthesis_plot(returns.dropna())
 
+#------------------- ------------------  -------------------------   ----------------------  --------------------- ----#
 x = stats.t.fit(gold_log_returns)
 sample = stats.t(x[0],x[1],x[2]).rvs(125)
 print(stats.kurtosis(sample))
@@ -95,7 +97,7 @@ plt.show()
 # BIAS ESTIMATION OF KURTOSIS
 
 
-
+#--------------------   ----------------------------   ---------------------------   -------------------   ------------#
 
 #Tail scatter plots
 useful_functions.tail_scatter(quantile=0.05,  df= returns,
