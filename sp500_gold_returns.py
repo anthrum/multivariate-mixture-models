@@ -48,12 +48,12 @@ for point in returns.dropna().to_dict('records'):
     ecdf_list.append(ecdf_dict[(point['sp500 returns'], point['gold returns'])])
 ecdf_array = np.array(ecdf_list)
 
-
-
+#----------------------        --------------------------      -----------------------------          -----------------#
+#3D histogram
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
 
-hist, xedges, yedges  = np.histogram2d(sp500_log_returns, gold_log_returns, bins=20, density=True,
+hist, xedges, yedges  = np.histogram2d(sp500_log_returns, gold_log_returns, bins=30, density=True,
                       range=[[min(gold_log_returns),max(gold_log_returns)],
                              [min(sp500_log_returns),max(sp500_log_returns)]]
                       )

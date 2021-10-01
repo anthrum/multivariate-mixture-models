@@ -81,9 +81,6 @@ def bivariate_ecdf(df, column_label1, column_label2):
     #generates dictionary with point coordinates as key and ecdf value on that point
     for element in n_points:
         ecdf[tuple(df.iloc[element[1],:].to_list())] = (element[0]+1)/len(n_points)*100
-        #element[0] =
-        #element[1] =
-
     return ecdf
 
 
