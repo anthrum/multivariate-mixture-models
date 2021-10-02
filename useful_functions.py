@@ -59,6 +59,7 @@ def normal_variance_mixture(miu, sigma, n, a, b):
     return X
 
 def bivariate_ecdf(df, column_label1, column_label2):
+    print(df[column_label1])
     sorted_array1 = df.sort_values(by=column_label1, ascending=True)
     sorted_array1.reset_index(inplace=True)
     print(sorted_array1)
@@ -67,9 +68,20 @@ def bivariate_ecdf(df, column_label1, column_label2):
     sorted_array2.reset_index(inplace=True)
 
     df2 = pd.concat([sorted_array1,sorted_array2], axis=1)
+
     df2.set_index(df2.iloc[:,0])
     df2_dict = df2.to_dict('records')
-    print(df2)
+
+    comparison = df.index == df2.index
+    for i in range(len(comparison)):
+        if comparison[i] == False:
+            print(i, df.index[i], df.index[i - 1])
+            df = df.drop(df.index[i], axis=0).reset_index(drop=True)
+            break
+        else:
+            pass
+
+    print(df)
     n_points = []
     ecdf = {}
     #Loop will generate with a list of lists containing an indexer value for a point and the number of
@@ -81,6 +93,7 @@ def bivariate_ecdf(df, column_label1, column_label2):
     #generates dictionary with point coordinates as key and ecdf value on that point
     for element in n_points:
         ecdf[tuple(df.iloc[element[1],:].to_list())] = (element[0]+1)/len(n_points)*100
+    print('hi')
     return ecdf
 
 

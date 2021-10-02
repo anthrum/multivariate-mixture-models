@@ -23,7 +23,7 @@ gold.index = np.arange(0, len(gold))
 for i in range(len(comparison)):
     if comparison[i] == False:
         print(i)
-        gold = gold.drop([i], axis = 0)
+        gold = gold.drop(i, axis = 0)
         break
     else:
         pass
@@ -37,21 +37,23 @@ gold_log_returns = (np.log(gold.iloc[:, 1]) - np.log(gold.iloc[:, 3]))*100
 
 # Bivariate returns dataframe
 returns = pd.DataFrame({'sp500 returns':sp500_log_returns,'gold returns': gold_log_returns})
-
+returns.dropna(inplace=True)
+returns.reset_index(drop=True, inplace=True)
 print(returns)
-
-
 
 ecdf_dict = useful_functions.bivariate_ecdf(returns, 'sp500 returns', 'gold returns')
 ecdf_list = []
+
 for point in returns.dropna().to_dict('records'):
     ecdf_list.append(ecdf_dict[(point['sp500 returns'], point['gold returns'])])
-ecdf_array = np.array(ecdf_list)
+ecdf_array = pd.Series(ecdf_list)
 
 #----------------------        --------------------------      -----------------------------          -----------------#
-#3D histogram
+#3D plots
 fig = plt.figure()
-ax = fig.add_subplot(projection='3d')
+ax = fig.add_subplot(2,2,1, projection='3d')
+ax.set_ylabel("sp500 returns")
+ax.set_xlabel("gold returns")
 
 hist, xedges, yedges  = np.histogram2d(sp500_log_returns, gold_log_returns, bins=30, density=True,
                       range=[[min(gold_log_returns),max(gold_log_returns)],
@@ -64,10 +66,41 @@ xpos = xpos.ravel()
 ypos = ypos.ravel()
 zpos = 0
 
+
 # Construct arrays with the dimensions for the 400 bars.
 dx = dy = 0.5
 dz = hist.ravel()
-ax.bar3d(xpos, ypos, zpos, dx, dy, dz, zsort='average')
+
+cmap = plt.cm.get_cmap('jet') # Get desired colormap - you can change this!
+max_height = np.max(dz)   # get range of colorbars so we can normalize
+min_height = np.min(dz)
+# scale each z to [0,1], and get their rgb values
+rgba = [cmap((k-min_height)/max_height) for k in dz]
+
+
+ax.bar3d(xpos, ypos, zpos, dx, dy, dz, zsort='average', color=rgba, shade=True)
+
+ax = fig.add_subplot(1,3,2,projection='3d')
+ax.plot3D(xpos, ypos, dz,zdir=xpos)
+ax.set_ylabel("sp500 returns")
+ax.set_xlabel("gold returns")
+
+meshdf = pd.DataFrame({'gold mesh': xpos, 'sp500 mesh': ypos})
+mesh_ecdf_dict = useful_functions.bivariate_ecdf(meshdf, 'gold mesh', 'sp500 mesh')
+mesh_ecdf_list = []
+
+for point in meshdf.dropna().to_dict('records'):
+    mesh_ecdf_list.append(mesh_ecdf_dict[(point['gold mesh'], point['sp500 mesh'])])
+mesh_ecdf_array = pd.Series(mesh_ecdf_list)
+
+
+
+ax = fig.add_subplot(2,1,1,projection='3d')
+#print(len(returns['sp500 returns'].dropna()), len(ecdf_array))
+ax.bar3d(xpos, ypos, zpos, dx, dy, mesh_ecdf_array, zsort='average', color=rgba, shade=True)
+ax.set_ylabel("sp500 returns")
+ax.set_xlabel("gold returns")
+
 plt.show()
 #-------------------- -------------------------  -------------------------   -------------------  -------------- ------#
 
