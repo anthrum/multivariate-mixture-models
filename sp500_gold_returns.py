@@ -75,6 +75,8 @@ plt.show()
 useful_functions.bivariate_synthesis_plot(returns.dropna())
 
 #------------------- ------------------  -------------------------   ----------------------  --------------------- ----#
+# Instead of univariate t fit, do bivariate t fit.
+
 x = stats.t.fit(gold_log_returns)
 sample = stats.t(x[0],x[1],x[2]).rvs(125)
 print(stats.kurtosis(sample))
